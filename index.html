@@ -378,7 +378,7 @@ const hc=pimg||(l.find(s=>s.cu)||{}).cu,mn=Math.round(l.reduce((a,s)=>a+(s.dur||
 return `<div class="row2" style="margin-bottom:6px"><button data-back class="ib">${ic('back')}</button>${sub.g=='pl'?`<button data-edit class="ib">${ic('edit')}</button>`:''}</div><div class="hero"><div class="cv ${sub.g=='artist'?'rd':''}">${hc?`<img src="${hc}">`:ic(sub.g=='pl'?'list':sub.g=='fav'?'heart':'note')}</div><h1>${esc(n)}</h1><div class="sub">${ars.length?esc(ars.length>1?'Vários artistas':ars[0])+' · ':''}${l.length} música${l.length!=1?'s':''}${mn?' · '+mn+' min':''}</div></div>${l.length?`<div class="acts"><div class="btn" data-all="${reg(l)}">${ic('play',1)} Tocar tudo</div><div class="btn g" data-shuf="${reg(l)}">${ic('shuffle')} Aleatório</div></div>${list(l,sub.g=='album')}`:'<div class="empty">Nada por aqui ainda.</div>'}`}
 if(tab=='home'){if(!S.length)return `<h1>${greet()}</h1>`+empty();
 const rc=st.rec.map(i=>byId[i]).filter(Boolean).slice(0,12),al=grp('album'),ar=grp('artist'),sg=S.slice(0,20),a=reg(sg),b=reg(rc);
-return `<h1>${greet()}</h1>${rc.length?`<h2>Tocadas recentemente</h2><div class="hs">${rc.map((s,i)=>`<div class="card" data-play="${esc(s.id)}" data-l="${b}">${cov(s)}<div class="t">${esc(s.title)}</div><div class="sub t">${esc(s.artist)}</div></div>`).join('')}</div>`:''}
+return `<h1>${greet()}</h1><div class="btn" data-iao style="width:100%;justify-content:center;margin:0 0 6px">${ic('spark')} O que você quer ouvir hoje?</div>${rc.length?`<h2>Tocadas recentemente</h2><div class="hs">${rc.map((s,i)=>`<div class="card" data-play="${esc(s.id)}" data-l="${b}">${cov(s)}<div class="t">${esc(s.title)}</div><div class="sub t">${esc(s.artist)}</div></div>`).join('')}</div>`:''}
 <h2>Suas músicas</h2><div class="hs">${sg.map(s=>`<div class="card" data-play="${esc(s.id)}" data-l="${a}">${cov(s)}<div class="t">${esc(s.title)}</div><div class="sub t">${esc(s.artist)}</div></div>`).join('')}</div>
 <h2>Álbuns</h2><div class="hs">${al.slice(0,15).map(([n,l])=>gcard('album',n,l)).join('')}</div>
 <h2>Artistas</h2><div class="hs">${ar.slice(0,15).map(([n,l])=>gcard('artist',n,l,1)).join('')}</div>`}
@@ -449,7 +449,7 @@ addEventListener('popstate',()=>{if(skipPop){skipPop--;return}const k=LY.pop();i
 if(k=='f'){$('full').classList.remove('o');refreshRows()}else if(k=='h')$('sheet').classList.remove('o');else if(k=='e')$('ed').classList.remove('o');else if(k=='s'){sub=null;render();$('main').scrollTop=SP;pg(-1)}});
 [['full','f'],['sheet','h'],['ed','e']].forEach(([id,k])=>new MutationObserver(()=>{const on=$(id).classList.contains('o'),has=LY.includes(k);if(on&&!has)lpush(k);else if(!on&&has)lpop(k)}).observe($(id),{attributes:true,attributeFilter:['class']}));
 /* ===== AJUSTES / TEMA / ÁUDIO ===== */
-const DEF={c1:'#080808',c2:'#ffffff',fx:1,fxs:'glass',fxi:100,pf:'balanced',anim:1,cs:'round',ps:'classic',pbg:'cover',sh:4,tb:1,wvs:1,alb:1,fxb:1,bs:'glass',nl:1,wp:'',wd:35,wb:0,cf:0,cfd:6,eq:'normal',eqc:[0,0,0,0,0],norm:0,name:'Usuário'};
+const DEF={c1:'#080808',c2:'#ffffff',fx:1,fxs:'glass',fxi:100,pf:'balanced',anim:1,cs:'round',ps:'classic',pbg:'cover',sh:4,tb:1,wvs:1,alb:1,fxb:1,bs:'glass',nl:1,wp:'',wd:35,wb:0,cf:0,cfd:6,eq:'normal',eqc:[0,0,0,0,0],norm:0,name:'Usuário',wo:1};
 let CFG={...DEF,eqc:[0,0,0,0,0]};try{Object.assign(CFG,JSON.parse(localStorage.getItem('jntcfg')||'{}'))}catch(e){}
 if(CFG.name==='Jonatan'&&!CFG.nv)CFG.name='Usuário';CFG.nv=1;
 const scfg=()=>{try{localStorage.setItem('jntcfg',JSON.stringify(CFG))}catch(e){}};
@@ -515,7 +515,7 @@ const EQN=[['normal','Normal'],['bass','Bass Boost'],['pop','Pop'],['rock','Rock
 const pAud=()=>sw('cf','Crossfade','Mistura o fim de uma música com o início da próxima')+(CFG.cf?rg('cfd','Duração',0,12,'s'):'')+`<div class="st col"><b>Equalizador</b><div class="chips">${EQN.map(([k,n])=>`<div class="chip ${CFG.eq==k?'a':''}" data-eqp="${k}">${n}</div>`).join('')}</div></div>`
 +(CFG.eq=='custom'?`<div class="st col">${['60 Hz','230 Hz','910 Hz','3,6 kHz','14 kHz'].map((n,i)=>`<div class="row2"><span class="sub" style="width:56px">${n}</span><input type="range" data-eq="${i}" min="-12" max="12" value="${CFG.eqc[i]}" style="--p:${(CFG.eqc[i]+12)/24*100}%;flex:1"></div>`).join('')}</div>`:'')+sw('norm','Normalização de volume','Equilibra músicas altas e baixas (compressor)');
 const pPerf=()=>sgm('pf','Modo',[['visual','Visual'],['balanced','Equilibrado'],['perf','Desempenho']])+`<div class="sub" style="padding:0 6px">Visual: todos os efeitos. Equilibrado: blur só nas barras principais. Desempenho: sem blur, sem animações pesadas, interface leve.</div>`+sw('anim','Animações');
-const pGen=()=>`<input class="in" data-nm value="${esc(CFG.name)}" placeholder="Seu nome" maxlength="24" style="margin:0"><div class="st"><div class="tx"><b>Biblioteca</b><span class="sub">${S.length} músicas · ${new Set(S.map(s=>s.album)).size} álbuns</span></div></div><div class="btn g" data-rs style="justify-content:center">${ic('refresh')} Restaurar padrões</div>`;
+const pGen=()=>`<input class="in" data-nm value="${esc(CFG.name)}" placeholder="Seu nome" maxlength="24" style="margin:0"><div class="st"><div class="tx"><b>Biblioteca</b><span class="sub">${S.length} músicas · ${new Set(S.map(s=>s.album)).size} álbuns</span></div></div>${sw('wo','Recomendações online só no Wi-Fi','A IA e as pesquisas usam internet')}<div class="btn g" data-rs style="justify-content:center">${ic('refresh')} Restaurar padrões</div><div class="st"><div class="tx"><b>JNT Player</b><span class="sub">App criado por Jonatan</span></div></div>`;
 const pLook=()=>sgm('cs','Estilo das capas',[['round','Arredondada'],['square','Quadrada'],['circle','Circular']])+sw('nl','Rótulos na navegação')+sw('anim','Animações')+`<div class="btn g" data-c="col" style="justify-content:center">${ic('palette')} Personalizar cores</div>`;
 const CATS=[['look','Aparência','palette','Capas e navegação',pLook],['col','Cores','spark','2 cores principais',pCol],['wall','Wallpapers','image','Fundo e desfoque',pWall],['fx','Efeitos visuais','spark','Glass, Grass e intensidade',pFx],['play','Player','play','Estilo e barra',pPlay],['aud','Áudio','eq','Crossfade e equalizador',pAud],['perf','Desempenho','gauge','Visual, equilibrado, leve',pPerf],['gen','Geral','gear','Nome e restauração',pGen]];
 function setView(){if(!SCAT)return `<h1>Ajustes</h1><div class="gt">${CATS.map(([k,n,i,d])=>`<div class="gc" data-c="${k}"><span class="gi">${ic(i)}</span><b>${n}</b><span class="sub">${d}</span></div>`).join('')}</div>`;
@@ -675,7 +675,36 @@ document.addEventListener('keydown',e=>{if(e.code=='Space'&&e.target.tagName!='I
 function tick(){const s=cur(),d=isFinite(au.duration)&&au.duration>0?au.duration:(s&&s.dur)||0,t=Math.min(au.currentTime||0,d||1e9);$('td').textContent=fmt(d);if(drag)return;const v=d?t/d*1000:0;$('seek').value=v;$('seek').style.setProperty('--p',v/10+'%');$('tc').textContent=fmt(t)}
 D.forEach(({el})=>['loadedmetadata','durationchange','seeked','emptied'].forEach(ev=>el.addEventListener(ev,()=>{if(el===au)tick()})));
 ['pointercancel','touchcancel','blur'].forEach(ev=>$('seek').addEventListener(ev,()=>{drag=false;tick()}));
-let LQ=null,LN=0;function saveQ(){if(LQ===Q&&LN===Q.length)return;LQ=Q;LN=Q.length;try{localStorage.setItem('jntq',JSON.stringify(Q))}catch(e){}}
+let LQ=null,LN=0;let IAS=new Set(),IAT='';
+function ia(){const m={};S.forEach(s=>m[s.artist]=(m[s.artist]||0)+1);const ar=Object.entries(m).filter(([n])=>!/desconhecido/i.test(n)).sort((a,b)=>b[1]-a[1]).slice(0,40);
+$('sheet').innerHTML=`<div><div class="row2" style="margin-bottom:8px"><b style="font-size:18px">O que você quer ouvir hoje?</b><button data-x>${ic('down')}</button></div><div class="sub" style="margin-bottom:10px">Escolha artistas da sua biblioteca ou escreva. Eu monto a seleção e já começo a tocar.</div><div class="chips" style="flex-wrap:wrap;overflow:visible">${ar.map(([n])=>`<div class="chip ${IAS.has(n)?'a':''}" data-ia="${esc(n)}">${esc(n)}</div>`).join('')}</div><input class="in" id="iat" placeholder="Ou escreva: artista, música, álbum…" value="${esc(IAT)}" style="margin-top:12px"><div class="btn" id="iago" style="width:100%;justify-content:center">${ic('play',1)} Tocar agora</div></div>`;$('sheet').classList.add('o')}
+$('main').addEventListener('click',e=>{if(e.target.closest('[data-iao]'))ia()});
+$('sheet').addEventListener('click',e=>{const c=e.target.closest('[data-ia]');if(c){const n=c.dataset.ia;IAS.has(n)?IAS.delete(n):IAS.add(n);c.classList.toggle('a');return}if(e.target.closest('#iago'))iaGo()});
+$('sheet').addEventListener('input',e=>{if(e.target.id=='iat')IAT=e.target.value});
+const STOP=['quero','ouvir','tocar','toca','musica','musicas','hoje','algo','com','para','das','dos','uma','umas','que','mais'];
+const enc=encodeURIComponent;
+function wifiOk(){if(!navigator.onLine)return 0;const c=navigator.connection;if(CFG.wo&&c&&c.type&&c.type!='wifi'&&c.type!='ethernet')return -1;return 1}
+async function aiTxt(pr){for(const u of ['https://text.pollinations.ai/'+enc(pr)+'?model=openai-fast','https://gen.pollinations.ai/text/'+enc(pr)]){const c=new AbortController(),t=setTimeout(()=>c.abort(),14000);
+try{const r=await fetch(u,{signal:c.signal});clearTimeout(t);if(r.ok){const x=(await r.text()).trim();if(x&&x.length<4000&&!x.startsWith('{'))return x}}catch(e){clearTimeout(t)}}return ''}
+function iaGo(){const ts=nz(IAT).split(/[\s,;]+/).filter(w=>w.length>2&&!STOP.includes(w));
+const l=S.filter(s=>IAS.has(s.artist)||(ts.length&&ts.some(w=>nz(s.title+' '+s.artist+' '+s.album).includes(w))));
+const desc=[...IAS,IAT.trim()].filter(Boolean).join(', ');
+if(!desc){toast('Escolha um artista ou escreva algo');return}
+if(l.length){for(let i=l.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[l[i],l[j]]=[l[j],l[i]]}go(0,l)}
+iaView(l.length,desc)}
+async function iaView(n,desc){const w=wifiOk(),lk=(u,t)=>`<a class="btn g" target="_blank" rel="noopener" href="${u}" style="text-decoration:none;margin:0">${t}</a>`;
+$('sheet').innerHTML=`<div><div class="row2" style="margin-bottom:10px"><b style="font-size:18px">JNT IA</b><button data-x>${ic('down')}</button></div>
+<div class="st col"><b>${n?'Tocando '+n+' música(s) para você':'Não achei isso na sua biblioteca'}</b><span class="sub" id="aim">${w==1?'Pensando em recomendações…':w==-1?'Conecte-se ao Wi-Fi para receber recomendações online.':'Sem internet para recomendações.'}</span></div>
+<div class="chips" id="aic" style="flex-wrap:wrap;overflow:visible;margin:12px 0 0"></div>
+${w==1?`<div class="sub" style="margin:12px 0 8px">Pesquisar artistas parecidos:</div><div style="display:flex;flex-wrap:wrap;gap:8px">${lk('https://www.google.com/search?q='+enc('artistas parecidos com '+desc),'Google')}${lk('https://music.youtube.com/search?q='+enc(desc),'YouTube Music')}${lk('https://open.spotify.com/search/'+enc(desc),'Spotify')}${lk('https://duckduckgo.com/?q='+enc('artistas parecidos com '+desc),'DuckDuckGo')}</div>`:''}</div>`;
+$('sheet').classList.add('o');if(w!=1)return;
+const x=await aiTxt(`Você é o assistente de um player de música. O usuário quer ouvir hoje: ${desc}. Responda em português do Brasil, de forma simpática, em no máximo 2 frases curtas. Depois, em uma nova linha final, escreva exatamente: ARTISTAS: seguido de 6 cantores ou bandas parecidos, separados por ponto e vírgula, sem repetir os já citados.`);
+const m=$('aim');if(!m)return;
+if(!x){m.textContent='Não consegui falar com a IA agora. Use as pesquisas abaixo.';return}
+const mm=x.match(/ARTISTAS:\s*(.+)/i),rec=mm?mm[1].split(/;|,/).map(s=>s.replace(/[*.]/g,'').trim()).filter(Boolean).slice(0,6):[];
+m.textContent=x.replace(/ARTISTAS:[\s\S]*/i,'').trim()||'Aqui vão algumas ideias:';
+$('aic').innerHTML=rec.map(r=>`<a class="chip" target="_blank" rel="noopener" href="https://music.youtube.com/search?q=${enc(r)}" style="text-decoration:none;color:inherit">${esc(r)}</a>`).join('')}
+function saveQ(){if(LQ===Q&&LN===Q.length)return;LQ=Q;LN=Q.length;try{localStorage.setItem('jntq',JSON.stringify(Q))}catch(e){}}
 function savePos(){if(!Q.length)return;try{localStorage.setItem('jntlast',JSON.stringify({x:X,t:au.currentTime||0,pl:!au.paused}))}catch(e){}}
 document.addEventListener('visibilitychange',()=>{if(document.hidden)savePos()});addEventListener('pagehide',savePos);
 function restore(){try{const l=JSON.parse(localStorage.getItem('jntlast')||'null'),q=JSON.parse(localStorage.getItem('jntq')||'[]');
